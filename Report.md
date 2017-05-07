@@ -1,130 +1,29 @@
-# This is a tester header
+# Integrating a Camera Function into an Android App
 
-## Subheading
+For a lot of apps, taking a picture can be a secondary function &&. For situations like this, using the internal camera on Android phones is the solution that makes the most sense, as it allows the app to use the pre-existing camera app to take pictures
 
-Here is some java
+## Setting up Permissions
 
-```java
-import static android.content.Context.LAYOUT_INFLATER_SERVICE;
+Android permissions are set out in the app's manifesto. In order to allow an app to use the camera on an android phone, two things must be specified in the `AndroidManifesto.xml` file that all app's have in their main folder
 
-/**
- * Created by Rae on 11/02/2017.
- */
-
-public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private static final int TYPE_HEADER = 0;
-    private static final int TYPE_ITEM = 1;
-    private EditText mURLField;
-
-    private String[] titles = {"Take Photo",
-            "My Location",
-            "My Images",
-            "Enter URL"};
-}
-```
-
-Here is some xml
+The first is to ask the user's permission to use the phone's camera. This will cause a popup the first time the user uses the app to get them to give the app permission to use the camera
 
 ```xml
-<?xml version="1.0" encoding="utf-8"?>
-
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="eu.kudan.ar">
-
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-feature android:name="android.hardware.location.gps" />
-    <uses-feature android:name="android.hardware.screen.portrait" />
-    <uses-feature android:name="android.hardware.camera" android:required="true" />
-
-    <application
-
-       android:allowBackup="true"
-        android:icon="@drawable/anthromos"
-        android:label="@string/app_name"
-        android:supportsRtl="true"
-        android:theme="@style/MyMaterialTheme">
-        <activity android:name=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".BeginActivity"></activity>
-        <activity android:name=".MapActivity"></activity>
-        <activity android:name=".ArJigsaw"></activity>
-        <activity android:name=".PickImageActivity"></activity>
-        <activity android:name=".PickSizeActivity"></activity>
-        <activity android:name=".LoadImageActivity"></activity>
-        <activity android:name=".TakePictureActivity"></activity>
-
-        <provider
-            android:name="android.support.v4.content.FileProvider"
-            android:authorities="main.java.eu.kudan.ar.android.fileprovider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths"></meta-data>
-        </provider>
-        <!--change from example app name-->
-    </application>
-
+<manifest ...>
+  <uses-permission android:name="android.permission.CAMERA" />
+  ...
 </manifest>
 ```
 
-##Another subheading
+The second is to specify that the app needs a camera to run.
 
-Here is a longer paragraph. Writing this because I'd hope that this report has some words that come in sentences that are longer than 5 words
-
-```
-<?xml version="1.0" encoding="utf-8"?>
-
-<paths xmlns:android="http://schemas.android.com/apk/res/android">
-    <external-path name="my_images" path="Android/data/eu.kudan.ar/files/Pictures" />
-</paths>
+```xml
+<manifest ..>
+  <uses-feature android:name="android.hardware.camera" android:required="true" />
+...
+</manifest>
 ```
 
-Well here is some more java
+If an app can still run without the camera, this can be changed to `android:required="false"`. It is then possible to check if a phone has a camera on runtime, and then modify the app accordingly.
 
-```
-private ViewHolder(View itemView) {
-    super(itemView);
-    mImageButton = (ImageView) itemView.findViewById(R.id.get_info);
-    mItemTitle = (TextView) itemView.findViewById(R.id.retrieve_from);
-
-    itemView.setOnClickListener(new View.OnClickListener() {
-        @Override public void onClick(View v) {
-            int position = getAdapterPosition();
-
-//                    Snackbar.make(v, "Click detected on item " + position,
-//                            Snackbar.LENGTH_LONG)
-//                            .setAction("Action", null).show();
-
-            if(position == 1){
-                //TODO: Get image from camera feed
-                Intent intent = new Intent(v.getContext(), TakePictureActivity.class);
-                v.getContext().startActivity(intent);
-            }
-            else if (position == 2){
-                Intent intent = new Intent(v.getContext(), MapActivity.class);
-                v.getContext().startActivity(intent);
-            }
-            else if (position == 3){
-                //TODO: Load image from gallery
-                Intent intent = new Intent(v.getContext(), LoadImageActivity.class);
-                v.getContext().startActivity(intent);
-            }
-            else if(position == 4){
-                getURL(v);
-                }
-        }
-    });
-}
-```
+## Taking a Photo
