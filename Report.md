@@ -1,6 +1,8 @@
 # Integrating a Camera Function into an Android App
 
-For a lot of apps, taking a picture can be a secondary function &&. For situations like this, using the internal camera on Android phones is the solution that makes the most sense, as it allows the app to use the pre-existing camera app to take pictures
+For a lot of apps, taking a picture can be a secondary function and is used as only a small part of the app's main functionality. For situations like this, using the internal camera on Android phones is the solution that makes the most sense, as it allows the app to use the pre-existing camera app to take pictures.
+
+With this in mind, a simple solution for using the built-in camera on Android phones can be made using a relatively simple setup that can be integrated into most apps whether they are brand new or already have an existing structure
 
 ## Setting up Permissions
 
@@ -58,7 +60,25 @@ It should be noted that in order to write a photo to the phone's storage, permis
 
 ## Taking a Photo
 
-In order to take a picture, an `Intent` must be created. This is the Android way of describing something which must be done, which can then be passed onto another function and then handle the returned file
+### Understanding Intents
+
+In order to take a picture, an `Intent` must be created. Intents are a key concept in Android development, and are essentially the Android way of describing something which must be done. This intent can then be passed onto another function and then handle the returned file. Android's built in infrastructure means that many functions to do with Intent protocol are automatically triggered during the running of the program.
+
+The two key functions to see here are `startActivityForResult` and `onActivityResult`. When `startActivityForResult` is called, it will launch the activity specified in the provided Intent (the Intent must be defined as returning a result)
+
+```java
+void startActivityForResult (Intent intent, int requestCode)
+```
+
+Once `startActivityForResult` is finished, it will immediately called `onActivityResult`, providing it with the data from the Intent, the result code (which can be used to check where the result came from), and a result code (to specify if the activity was successfully executed)
+
+```java
+void onActivityResult (int requestCode, int resultCode, Intent data)
+```
+
+### Writing a Simple Intent
+
+With these two functions in mind,a simple Intent for capturing an image is shown below (this can be expanded to include more than simply taking a photo). While it is not shown here, it should be noted that `onActivityResult` will be a useful function for doing more with the return file from the Intent
 
 ```java
 static final int REQUEST_IMAGE_CAPTURE = 1;
@@ -75,7 +95,7 @@ private void dispatchTakePictureIntent() {
 
 Once the photo has been taken (and stored), most apps will want to then get the photo back. This can be done using the  `getUriForFile` function and the `FileProvider` type to provide a secure way of storing photos
 
-### Configuring the file path data
+### Configuring the File Path Data
 
 The `FileProvider` needs to be configured in the app's manifest file. This
 
@@ -97,11 +117,11 @@ From the `meta-data` tag above it is clear that the provider expects paths to be
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <paths xmlns:android="http://schemas.android.com/apk/res/android">
-    <external-path name="my_images" path="Android/data/com.example.package.name/files/Pictures" />
+    <external-path name="my_images" path="Android/data/example.package.name/files/Pictures" />
 </paths>
 ```
 
-### Writing the new intent
+### Writing the New intent
 
 With these now configured, a new intent can be written, which is able to use these to get back a full-size photo
 
