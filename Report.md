@@ -6,7 +6,7 @@ With this in mind, a simple solution for using the built-in camera on Android ph
 
 ## Setting up Permissions
 
-Android permissions are set out in the app's manifesto, which specifies the meta-date for the app (such as the name and icon on phones), the hardware that the app needs to run, and the permissions that the user needs to grant the app. In order to allow an app to use the camera on an android phone, two things must be specified in the `AndroidManifesto.xml` file that all apps have in their main folder
+Android permissions are set out in the app's manifesto, which specifies the meta-data for the app (such as the name and icon on phones), the hardware that the app needs to run, and the permissions that the user needs to grant the app. In order to allow an app to use the camera on an android phone, two things must be specified in the `AndroidManifesto.xml` file that all apps have in their main folder
 
 The first is to ask the user's permission to use the phone's camera. This will cause a popup the first time the user uses the app to get them to give the app permission to use the camera
 
@@ -26,7 +26,7 @@ The second is to specify that the app needs a camera to run.
 </manifest>
 ```
 
-If an app can still run without the camera, this can be changed to `android:required="false"`. It is then possible to check if a phone has a camera on runtime by running `hasSystemFeature(PackageManager.FEATURE_CAMERA)` upon app startup, and then disabling any features that require a camera to avoid any issues while running the app.
+If an app can still run without the camera, this can be changed to `android:required="false"`. It is then possible to check if a phone has a camera on runtime by running `hasSystemFeature(PackageManager.FEATURE_CAMERA)` upon app startup, and then disabling any features that require a camera to avoid any issues while running the app. It should also be noted that specifying that your app needs a camera means that it will not be shown on the Google Play store for devices that don't have a camera, thereby reducing any risk of devices without cameras trying to use your app.
 
 ## Creating Unique Files
 
@@ -58,7 +58,7 @@ In order to write a photo to the phone's storage, permission for this should be 
 </manifest>
 ```
 
-It should be noted that requesting a write permission also implicitly requests a read permission on android, so with this line it is now possible to both read and write to a a directory on the phone's storage. On newer versions of Android (i.e. those run on most modern phones) the directory is not accessible to other apps, so in fact there is not always a need to request this permission, as it is often already granted to the app by default
+It should be noted that requesting a write permission also implicitly requests a read permission on android, so with this line it is now possible to both read and write to a directory on the phone's storage. On newer versions of Android (i.e. those run on most modern phones) the directory is not accessible to other apps, so in fact there is not always a need to request this permission, as it is often already granted to the app by default
 
 ## Taking a Photo
 
@@ -80,7 +80,7 @@ void onActivityResult (int requestCode, int resultCode, Intent data)
 
 ### Writing a Simple Intent
 
-With these two functions in mind,a simple Intent for capturing an image is shown below (this can be expanded to include more than simply taking a photo). While it is not shown here, it should be noted that `onActivityResult` will be a useful function for doing more with the return file from the Intent
+With these two functions in mind, a simple Intent for capturing an image is shown below (this can be expanded to include more than simply taking a photo). While it is not shown here, it should be noted that `onActivityResult` will be a useful function for doing more with the return file from the Intent
 
 ```java
 static final int REQUEST_IMAGE_CAPTURE = 1;
@@ -147,3 +147,9 @@ if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
     }
 }
 ```
+
+## Pic Example
+
+Look it is a cat
+
+![Picture of cute cat](/cat.jpg)
