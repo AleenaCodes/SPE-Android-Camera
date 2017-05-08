@@ -6,7 +6,7 @@ With this in mind, a simple solution for using the built-in camera on Android ph
 
 ## Setting up Permissions
 
-Android permissions are set out in the app's manifesto. In order to allow an app to use the camera on an android phone, two things must be specified in the `AndroidManifesto.xml` file that all app's have in their main folder
+Android permissions are set out in the app's manifesto, which specifies the meta-date for the app (such as the name and icon on phones), the hardware that the app needs to run, and the permissions that the user needs to grant the app. In order to allow an app to use the camera on an android phone, two things must be specified in the `AndroidManifesto.xml` file that all apps have in their main folder
 
 The first is to ask the user's permission to use the phone's camera. This will cause a popup the first time the user uses the app to get them to give the app permission to use the camera
 
@@ -26,11 +26,11 @@ The second is to specify that the app needs a camera to run.
 </manifest>
 ```
 
-If an app can still run without the camera, this can be changed to `android:required="false"`. It is then possible to check if a phone has a camera on runtime, and then modify the app accordingly.
+If an app can still run without the camera, this can be changed to `android:required="false"`. It is then possible to check if a phone has a camera on runtime by running `hasSystemFeature(PackageManager.FEATURE_CAMERA)` upon app startup, and then disabling any features that require a camera to avoid any issues while running the app.
 
 ## Creating Unique Files
 
-Before taking a photo, it's important to think of how the photo will be stored. Onne of the key issues with storing files as photos is creating unique filenames which can then be referenced without having any collisions. This is solved by using the current date and time in the file name, as these will always be unique.
+Before taking a photo, it's important to think of how the photo will be stored and find a method of giving each photo a unique name. While for an app that instantly uses a photo taken this may not be a problem, many apps store and reference photos later on, and so one of the key priorities is creating unique filenames which can then be referenced without having any collisions.  This is solved by using the current date and time in the file name, as these will always be unique due to being measured down to the second.
 
 An example of a function that will create a unique file name for the photo is shown below
 
@@ -49,7 +49,7 @@ private File createImageFile() throws IOException {
 }
 ```
 
-It should be noted that in order to write a photo to the phone's storage, permission for this should be requested in the app's manifest file. This, like for the camera, will get the user's permission to write to storage that first time the app is run
+In order to write a photo to the phone's storage, permission for this should be requested in the app's manifest file. This, like for the camera, will get the user's permission to write to storage that first time the app is run
 
 ```xml
 <manifest ...>
@@ -57,6 +57,8 @@ It should be noted that in order to write a photo to the phone's storage, permis
     ...
 </manifest>
 ```
+
+It should be noted that requesting a write permission also implicitly requests a read permission on android, so with this line it is now possible to both read and write to a a directory on the phone's storage. On newer versions of Android (i.e. those run on most modern phones) the directory is not accessible to other apps, so in fact there is not always a need to request this permission, as it is often already granted to the app by default
 
 ## Taking a Photo
 
@@ -143,27 +145,5 @@ if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
         startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
     }
-}
-```
-
-## Getting the Image Back - BAD VERSION??
-
-Once the photo has been taken (and stored), most apps will want to then get the photo back. This can be done in the `onActivityResult` which the `Intent` will deliver the photo to. The photo can be decoded as a `Bitmap` using the `BitmapFactory`, and then used as required
-
-```java
-protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    super.onActivityResult(requestCode, resultCode, data);
-    try {
-        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK){
-            Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath);
-            ...
-        }
-        else {
-            //No image taken
-        }
-    } catch (Exception e) {
-        //Catch exception
-    }
-
 }
 ```
