@@ -153,3 +153,7 @@ if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
 Look it is a cat
 
 ![Picture of cute cat](/cat.jpg)
+
+Another cat appears (twins!)
+
+![Another cute cat](https://raw.githubusercontent.com/AleenaCodes/SPE-Android-Camera/master/cat.jpg)
